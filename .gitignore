@@ -1,0 +1,20 @@
+# Maven / Java
+target/
+*.class
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Variables locales / secretos
+.env
+.env.*
+!.env.example
+
+# Datos generados en ejecución
+uploads/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
