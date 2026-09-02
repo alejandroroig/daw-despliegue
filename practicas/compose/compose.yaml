@@ -1,0 +1,88 @@
+services:
+  bd:
+    image: ghcr.io/alejandroroig/escaparate-db:1.0.0
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - datos-bd:/var/lib/postgresql
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -h 127.0.0.1 -U $${POSTGRES_USER} -d $${POSTGRES_DB}"
+        ]
+      interval: 2s
+      timeout: 2s
+      retries: 15
+
+  app-1:
+    image: ghcr.io/alejandroroig/escaparate:sesion-04
+    environment:
+      DB_HOST: bd
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      APP_INSTANCE_NAME: app-1
+      APP_STORAGE_TYPE: filesystem
+      APP_STORAGE_PATH: /data/uploads
+    volumes:
+      - imagenes-compartidas:/data/uploads
+    depends_on:
+      bd:
+        condition: service_healthy
+
+  app-2:
+    image: ghcr.io/alejandroroig/escaparate:sesion-04
+    environment:
+      DB_HOST: bd
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      APP_INSTANCE_NAME: app-2
+      APP_STORAGE_TYPE: filesystem
+      APP_STORAGE_PATH: /data/uploads
+    volumes:
+      - imagenes-compartidas:/data/uploads
+
+    depends_on:
+      bd:
+        condition: service_healthy
+
+  app-3:
+    image: ghcr.io/alejandroroig/escaparate:sesion-04
+    environment:
+      DB_HOST: bd
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      APP_INSTANCE_NAME: app-3
+      APP_STORAGE_TYPE: filesystem
+      APP_STORAGE_PATH: /data/uploads
+    volumes:
+      - imagenes-compartidas:/data/uploads
+
+    depends_on:
+      bd:
+        condition: service_healthy
+
+  web:
+    image: nginx:1.30.4-alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ../nginx/conf.d:/etc/nginx/conf.d:ro
+      - ../nginx/sitio-escaparate/escaparate:/srv/www/escaparate:ro
+      - ../nginx/sitio-docs:/srv/www/docs:ro
+    depends_on:
+      - app-1
+      - app-2
+      - app-3
+
+volumes:
+  datos-bd:
+  imagenes-compartidas:
