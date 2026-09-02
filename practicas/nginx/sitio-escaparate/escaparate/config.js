@@ -1,0 +1,1 @@
+window.APP_CONFIG = {\n    modo: "estatico",\n    datos: "./data/productos.json"\n};\n
