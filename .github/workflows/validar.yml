@@ -1,0 +1,37 @@
+name: Validar repositorio
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  estructura:
+    name: Comprobar repositorio
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Comprobar estructura básica
+        run: |
+          test -f escaparate/pom.xml
+          test -f escaparate/mvnw
+          test -f practicas/README.md
+
+      - name: Comprobar ficheros que no deben versionarse
+        shell: bash
+        run: |
+          prohibidos="$(
+            git ls-files \
+              | grep -E '(^|/)\.env($|\.)|(^|/)target/|\.class$' \
+              | grep -vE '(^|/)\.env\.example$' \
+              || true
+          )"
+
+          if [ -n "$prohibidos" ]; then
+            echo "Se han encontrado ficheros que no deberían estar versionados:"
+            echo "$prohibidos"
+            exit 1
+          fi
