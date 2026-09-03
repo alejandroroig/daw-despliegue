@@ -35,3 +35,36 @@ jobs:
             echo "$prohibidos"
             exit 1
           fi
+
+  construir-imagen:
+    name: Construir imagen
+    needs: estructura
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Construir la imagen de Escaparate
+        run: |
+          docker build \
+            -f practicas/docker/app/Dockerfile \
+            -t escaparate:validacion \
+            escaparate/
+
+  validar-compose:
+    name: Validar Docker Compose
+    needs: estructura
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Preparar valores de ejemplo
+        working-directory: practicas/compose
+        run: cp .env.example .env
+
+      - name: Validar la configuración
+        working-directory: practicas/compose
+        run: docker compose config > /dev/null

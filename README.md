@@ -27,3 +27,5 @@ Los cambios llegan a `main` mediante Pull Request.
 ## Puesta en marcha
 
 Se completará cuando se construya el primer procedimiento de ejecución y despliegue.
+
+<!-- prueba temporal de Actions -->
