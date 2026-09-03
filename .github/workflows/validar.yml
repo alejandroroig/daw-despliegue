@@ -35,3 +35,19 @@ jobs:
             echo "$prohibidos"
             exit 1
           fi
+
+  construir-imagen:
+    name: Construir imagen
+    needs: estructura
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Construir la imagen de Escaparate
+        run: |
+          docker build \
+            -f practicas/docker/app/Dockerfile \
+            -t escaparate:validacion \
+            escaparate/
